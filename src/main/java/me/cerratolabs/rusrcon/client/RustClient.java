@@ -56,8 +56,21 @@ public class RustClient {
         if (message.getType().equalsIgnoreCase("CHAT")) {
             return mapper.readValue(message.getMessage(), PlayerChatEvent.class);
         }
-
         return new MessageReceiveEvent(message);
+    }
 
+    @SneakyThrows
+    public void sendMessage(String message) {
+        RustGenericMessage rustGenericMessage = new RustGenericMessage();
+        rustGenericMessage.setType("Generic");
+        rustGenericMessage.setIdentifier(0);
+        rustGenericMessage.setStacktrace("");
+        rustGenericMessage.setMessage(message);
+        sendMessage(rustGenericMessage);
+    }
+
+    @SneakyThrows
+    public void sendMessage(RustGenericMessage message) {
+        clientWebSocket.sendMessage(mapper.writeValueAsString(message));
     }
 }
