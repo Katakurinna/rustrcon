@@ -6,9 +6,15 @@ import me.cerratolabs.rusrcon.events.PlayerChatEvent;
 @AllArgsConstructor
 public class PlayerChatEventParser implements IParser<PlayerChatEvent> {
 
-    private RustGenericMessage message;
-
-    public PlayerChatEvent toEvent() {
+    @Override
+    public PlayerChatEvent toEvent(RustGenericMessage message) {
+        PlayerChatEvent event = new PlayerChatEvent();
+        //event.setChannel();
         return null;
+    }
+
+    @Override
+    public boolean match(RustGenericMessage message) {
+        return message.getMessage().startsWith("[TEAM CHAT]") || message.getMessage().startsWith("[CHAT]");
     }
 }

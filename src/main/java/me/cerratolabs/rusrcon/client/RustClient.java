@@ -39,6 +39,7 @@ public class RustClient {
     public void startConnection(URI uri) {
         clientWebSocket = new ClientWebSocket(uri);
         clientWebSocket.addMessageHandler(this::registerHandler);
+        Thread.sleep(300);
         do {
             Thread.sleep(SLEEP_RATE);
         } while (clientWebSocket.isOpen());
@@ -57,6 +58,16 @@ public class RustClient {
             return mapper.readValue(message.getMessage(), PlayerChatEvent.class);
         }
         return new MessageReceiveEvent(message);
+    }
+
+    @SneakyThrows
+    public void sendChatMessage(String message) {
+        RustGenericMessage rustGenericMessage = new RustGenericMessage();
+        rustGenericMessage.setType("Chat");
+        rustGenericMessage.setIdentifier(0);
+        rustGenericMessage.setStacktrace("");
+        rustGenericMessage.setMessage("say" + message);
+        sendMessage(rustGenericMessage);
     }
 
     @SneakyThrows

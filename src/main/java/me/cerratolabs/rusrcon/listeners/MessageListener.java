@@ -14,6 +14,6 @@ public class MessageListener implements EventListener {
 
     @EventHandler
     public void onMessage(PlayerChatEvent event) {
-        System.out.println(event.getUsername() + ": " + event.getMessage());
+        System.out.println(event.getUsername() + " " + event.getTime() + ": " + event.getMessage());
     }
 }
