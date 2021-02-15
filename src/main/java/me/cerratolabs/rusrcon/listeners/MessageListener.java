@@ -1,7 +1,7 @@
 package me.cerratolabs.rusrcon.listeners;
 
-import me.cerratolabs.rusrcon.events.MessageReceiveEvent;
-import me.cerratolabs.rusrcon.events.PlayerChatEvent;
+import me.cerratolabs.rusrcon.events.messages.MessageReceiveEvent;
+import me.cerratolabs.rusrcon.events.event.PlayerChatEvent;
 import me.nurio.events.handler.EventHandler;
 import me.nurio.events.handler.EventListener;
 

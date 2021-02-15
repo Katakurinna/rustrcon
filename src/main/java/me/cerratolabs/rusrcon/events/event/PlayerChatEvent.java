@@ -1,4 +1,4 @@
-package me.cerratolabs.rusrcon.events;
+package me.cerratolabs.rusrcon.events.event;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AllArgsConstructor;

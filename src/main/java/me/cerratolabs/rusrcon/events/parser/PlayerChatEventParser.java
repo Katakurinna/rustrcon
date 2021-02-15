@@ -1,7 +1,9 @@
 package me.cerratolabs.rusrcon.events.parser;
 
 import lombok.AllArgsConstructor;
-import me.cerratolabs.rusrcon.events.PlayerChatEvent;
+import me.cerratolabs.rusrcon.events.event.PlayerChatEvent;
+import me.cerratolabs.rusrcon.events.messages.RustGenericMessage;
+import me.cerratolabs.rusrcon.events.parser.generic.IParser;
 
 @AllArgsConstructor
 public class PlayerChatEventParser implements IParser<PlayerChatEvent> {
