@@ -86,4 +86,8 @@ public class RustClient {
     public void sendMessage(RustGenericMessage message) {
         clientWebSocket.sendMessage(mapper.writeValueAsString(message));
     }
+
+    public boolean isOpen() {
+        return clientWebSocket.isOpen();
+    }
 }
