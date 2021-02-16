@@ -30,7 +30,7 @@ public class ClientWebSocket {
      */
     @OnOpen
     public void onOpen(Session userSession) {
-        System.out.println("Logged in " + userSession.getRequestURI().getHost());
+        System.out.println("Logged in!");
         this.userSession = userSession;
     }
 
