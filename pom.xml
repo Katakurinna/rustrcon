@@ -6,7 +6,7 @@
 
     <groupId>me.cerratolabs</groupId>
     <artifactId>rustrcon</artifactId>
-    <version>0.0.5</version>
+    <version>0.0.5b</version>
     <repositories>
         <repository>
             <id>nurio-repo</id>
