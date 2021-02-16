@@ -1,6 +1,7 @@
 package me.cerratolabs.rusrcon.commands;
 
 import lombok.Data;
+import me.cerratolabs.rusrcon.commands.enums.PlayerLevel;
 
 import java.util.Map;
 
@@ -23,13 +24,13 @@ public class GenericCommand {
     private Long timeoutPerPlayer;
 
     /**
-     * It is used to know the level of permissions that the user needs to reproduce them. By default everyone is level 0.
-     */
-    private Integer needAuthorization;
-
-    /**
      * Saves the user who has run it and how long it needs to pass until you can run it again
      */
     private Map<String, Long> timeoutCounter;
+
+    /**
+     * It is used to know the level of permissions that the user needs to reproduce them. By default everyone is level 0.
+     */
+    private PlayerLevel neededPlayerLevel;
 
 }

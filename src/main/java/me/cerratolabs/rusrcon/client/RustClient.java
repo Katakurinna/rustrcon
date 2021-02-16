@@ -3,9 +3,10 @@ package me.cerratolabs.rusrcon.client;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
-import me.cerratolabs.rusrcon.events.messages.MessageReceiveEvent;
 import me.cerratolabs.rusrcon.events.event.PlayerChatEvent;
+import me.cerratolabs.rusrcon.events.messages.MessageReceiveEvent;
 import me.cerratolabs.rusrcon.events.messages.RustGenericMessage;
+import me.cerratolabs.rusrcon.events.parser.factory.RustParserFactory;
 import me.cerratolabs.rusrcon.websocket.ClientWebSocket;
 import me.nurio.events.EventManager;
 import me.nurio.events.handler.Event;
@@ -49,13 +50,18 @@ public class RustClient {
     public void registerHandler(String message) {
         RustGenericMessage rustGenericMessage = mapper.readValue(message, RustGenericMessage.class);
         Event event = getEvent(rustGenericMessage);
-        eventManager.callEvent(event);
+        new Thread(() -> eventManager.callEvent(event)).start();
     }
 
     @SneakyThrows
     public Event getEvent(RustGenericMessage message) {
         if (message.getType().equalsIgnoreCase("CHAT")) {
             return mapper.readValue(message.getMessage(), PlayerChatEvent.class);
+        }
+        RustParserFactory factory = new RustParserFactory();
+        Event parser = factory.getParser(message);
+        if (parser != null) {
+            return parser;
         }
         return new MessageReceiveEvent(message);
     }
