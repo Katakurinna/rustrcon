@@ -40,10 +40,6 @@ public class RustClient {
     public void startConnection(URI uri) {
         clientWebSocket = new ClientWebSocket(uri);
         clientWebSocket.addMessageHandler(this::registerHandler);
-        Thread.sleep(300);
-        do {
-            Thread.sleep(SLEEP_RATE);
-        } while (clientWebSocket.isOpen());
     }
 
     @SneakyThrows

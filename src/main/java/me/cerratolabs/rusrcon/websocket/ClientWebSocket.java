@@ -1,7 +1,5 @@
 package me.cerratolabs.rusrcon.websocket;
 
-import lombok.SneakyThrows;
-
 import javax.websocket.*;
 import java.net.URI;
 
