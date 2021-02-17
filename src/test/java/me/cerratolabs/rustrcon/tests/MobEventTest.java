@@ -1,4 +1,4 @@
-package me.cerratolabs.rustrcon;
+package me.cerratolabs.rustrcon.tests;
 
 import me.cerratolabs.rustrcon.client.RustClient;
 import me.cerratolabs.rustrcon.config.ConfigReader;
@@ -7,17 +7,15 @@ import me.cerratolabs.rustrcon.listeners.MessageListener;
 import me.cerratolabs.rustrcon.listeners.StatisticsListener;
 import me.nurio.events.EventManager;
 
-public class MClass {
+public class MobEventTest {
 
-    private static final EventManager manager = new EventManager();
-    private static RustClient rustClient;
-
-    public static void main(String[] args) {
-        ConfigReader reader = new ConfigReader("src\\test\\resources\\config.yml");
+    public void mockData() {
+        EventManager manager = new EventManager();
+        ConfigReader reader = new ConfigReader("src\\main\\test\\resources\\config.yml");
         ServerConfig config = reader.parse();
         manager.registerEvents(new MessageListener());
         manager.registerEvents(new StatisticsListener());
-        rustClient = new RustClient(manager);
+        RustClient rustClient = new RustClient(manager);
         rustClient.startConnection(
                 config.getAddress(),
                 config.getPort(),

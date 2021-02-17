@@ -65,7 +65,7 @@ public class PlayerKillEventParser implements IParser<Event> {
         String replace = msg.substring(msg.indexOf(WAS_KILLED_BY)).replace(WAS_KILLED_BY, "").trim();
         String regex = "((.+) (\\((\\d+)\\)))$";
         Pattern pattern = Pattern.compile(regex, Pattern.MULTILINE);
-        Matcher matcher = pattern.matcher(message.getMessage());
+        Matcher matcher = pattern.matcher(replace);
         return matcher.matches();
     }
 
