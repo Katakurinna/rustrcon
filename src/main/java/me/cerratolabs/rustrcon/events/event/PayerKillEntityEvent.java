@@ -4,9 +4,10 @@ import lombok.Data;
 import me.cerratolabs.rustrcon.entities.LivingEntity;
 import me.cerratolabs.rustrcon.entities.Player;
 import me.cerratolabs.rustrcon.entities.enums.DeathReason;
+import me.nurio.events.handler.Event;
 
 @Data
-public class PayerKillEntityEvent {
+public class PayerKillEntityEvent extends Event {
 
     private LivingEntity entity;
 
