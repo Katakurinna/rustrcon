@@ -1,4 +1,4 @@
-package me.cerratolabs.rustrcon.events.event;
+package me.cerratolabs.rustrcon.events.event.chat;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AllArgsConstructor;

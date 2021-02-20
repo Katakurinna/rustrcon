@@ -1,7 +1,7 @@
-package me.cerratolabs.rustrcon.events.parser;
+package me.cerratolabs.rustrcon.events.parser.parsers;
 
 import lombok.AllArgsConstructor;
-import me.cerratolabs.rustrcon.events.event.PlayerChatEvent;
+import me.cerratolabs.rustrcon.events.event.chat.PlayerChatEvent;
 import me.cerratolabs.rustrcon.events.messages.RustGenericMessage;
 import me.cerratolabs.rustrcon.events.parser.generic.IParser;
 

@@ -4,7 +4,7 @@ import me.cerratolabs.rustrcon.client.RustClient;
 import me.cerratolabs.rustrcon.config.ConfigReader;
 import me.cerratolabs.rustrcon.config.ServerConfig;
 import me.cerratolabs.rustrcon.listeners.MessageListener;
-import me.cerratolabs.rustrcon.listeners.StatisticsListener;
+import me.cerratolabs.rustrcon.listeners.PlayerListener;
 import me.nurio.events.EventManager;
 
 public class MobEventTest {
@@ -14,7 +14,7 @@ public class MobEventTest {
         ConfigReader reader = new ConfigReader("src\\main\\test\\resources\\config.yml");
         ServerConfig config = reader.parse();
         manager.registerEvents(new MessageListener());
-        manager.registerEvents(new StatisticsListener());
+        manager.registerEvents(new PlayerListener());
         RustClient rustClient = new RustClient(manager);
         rustClient.startConnection(
                 config.getAddress(),

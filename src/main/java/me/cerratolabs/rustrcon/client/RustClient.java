@@ -3,10 +3,11 @@ package me.cerratolabs.rustrcon.client;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
-import me.cerratolabs.rustrcon.events.event.PlayerChatEvent;
+import me.cerratolabs.rustrcon.events.event.chat.PlayerChatEvent;
 import me.cerratolabs.rustrcon.events.messages.MessageReceiveEvent;
 import me.cerratolabs.rustrcon.events.messages.RustGenericMessage;
 import me.cerratolabs.rustrcon.events.parser.factory.RustParserFactory;
+import me.cerratolabs.rustrcon.events.parser.generic.IParser;
 import me.cerratolabs.rustrcon.websocket.ClientWebSocket;
 import me.nurio.events.EventManager;
 import me.nurio.events.handler.Event;
@@ -20,6 +21,7 @@ public class RustClient {
     private ObjectMapper mapper = new ObjectMapper();
 
     private final EventManager eventManager;
+    private final RustParserFactory parserFactory = new RustParserFactory();
 
     @SneakyThrows
     public void startConnection(String address, String port, String password) {
@@ -46,20 +48,27 @@ public class RustClient {
     public void registerHandler(String message) {
         RustGenericMessage rustGenericMessage = mapper.readValue(message, RustGenericMessage.class);
         Event event = getEvent(rustGenericMessage);
-        new Thread(() -> eventManager.callEvent(event)).start();
+        new Thread(() -> eventManager.callEvent(new MessageReceiveEvent(rustGenericMessage))).start();
+        if(event != null) {
+            new Thread(() -> eventManager.callEvent(event)).start();
+        }
+
     }
 
     @SneakyThrows
     public Event getEvent(RustGenericMessage message) {
+        Event parser;
+        if (message.getIdentifier() > 0) {
+            parser = parserFactory.getParserByIdentifier(message);
+        }
         if (message.getType().equalsIgnoreCase("CHAT")) {
             return mapper.readValue(message.getMessage(), PlayerChatEvent.class);
         }
-        RustParserFactory factory = new RustParserFactory();
-        Event parser = factory.getParser(message);
+        parser = parserFactory.getParser(message);
         if (parser != null) {
             return parser;
         }
-        return new MessageReceiveEvent(message);
+        return null;
     }
 
     @SneakyThrows
@@ -89,5 +98,13 @@ public class RustClient {
 
     public boolean isOpen() {
         return clientWebSocket.isOpen();
+    }
+
+    public void registerEventParser(IParser parser) {
+        this.parserFactory.registerParser(parser);
+    }
+
+    public void registerEventParserByIdentifier(IParser parser) {
+        this.parserFactory.registerParserByIdentifier(parser);
     }
 }
