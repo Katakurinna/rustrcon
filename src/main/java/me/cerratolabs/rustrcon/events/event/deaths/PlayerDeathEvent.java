@@ -1,4 +1,4 @@
-package me.cerratolabs.rustrcon.events.event;
+package me.cerratolabs.rustrcon.events.event.deaths;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -10,13 +10,12 @@ import me.nurio.events.handler.Event;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class PlayerDeathByPlayerEvent extends Event {
-
-    private Player killer;
+public class PlayerDeathEvent extends Event {
 
     private Player player;
 
     private DeathReason reason;
 
     private Long time;
+
 }

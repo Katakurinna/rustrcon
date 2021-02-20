@@ -1,21 +1,21 @@
-package me.cerratolabs.rustrcon.events.event;
+package me.cerratolabs.rustrcon.events.event.player;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import me.cerratolabs.rustrcon.entities.Player;
-import me.cerratolabs.rustrcon.entities.enums.DeathReason;
 import me.nurio.events.handler.Event;
 
 @Data
-@AllArgsConstructor
 @NoArgsConstructor
-public class PlayerDeathEvent extends Event {
+@AllArgsConstructor
+public class PlayerDisconnectEvent extends Event {
 
     private Player player;
 
-    private DeathReason reason;
+    private String ip;
 
-    private Long time;
+    private String reason;
 
+    private long timestamp;
 }

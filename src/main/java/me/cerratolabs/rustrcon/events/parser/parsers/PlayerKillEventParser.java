@@ -1,10 +1,11 @@
-package me.cerratolabs.rustrcon.events.parser;
+package me.cerratolabs.rustrcon.events.parser.parsers;
 
 import me.cerratolabs.rustrcon.entities.MobEntity;
 import me.cerratolabs.rustrcon.entities.Player;
 import me.cerratolabs.rustrcon.entities.enums.DeathReason;
-import me.cerratolabs.rustrcon.events.event.PlayerDeathByEntityEvent;
-import me.cerratolabs.rustrcon.events.event.PlayerDeathByPlayerEvent;
+import me.cerratolabs.rustrcon.events.event.pve.PlayerDeathByEntityEvent;
+import me.cerratolabs.rustrcon.events.event.pve.PlayerKillEntityEvent;
+import me.cerratolabs.rustrcon.events.event.pvp.PlayerDeathByPlayerEvent;
 import me.cerratolabs.rustrcon.events.messages.RustGenericMessage;
 import me.cerratolabs.rustrcon.events.parser.generic.IParser;
 import me.nurio.events.handler.Event;
@@ -16,6 +17,7 @@ public class PlayerKillEventParser implements IParser<Event> {
 
     private static final String KILLED_BY_PLAYER_REGEX = "((.+)(\\[(\\d{17})\\]))( was killed by )((.+)(\\[(\\d{17})\\]))$";
     private static final String KILLED_BY_MOB_REGEX = "((.+)(\\[(\\d{17})\\]))( was killed by )((.+) (\\((\\d+)\\)))$";
+    private static final String MOB_KILLED_BY_PLAYER = "((.+)(\\[(\\d+)\\]))( was killed by )((.+)(\\[(\\d{17})\\]))$";
     private static final String WAS_KILLED_BY = "was killed by";
     private static final String WAS_SUICIDE = "was suicide";
 
@@ -30,15 +32,15 @@ public class PlayerKillEventParser implements IParser<Event> {
 
     @Override
     public Event toEvent(RustGenericMessage message) {
-
         if (wasKilledByPlayer(message)) {
             return parseToDeathByPlayerEvent(message);
         }
-
         if (wasKilledByMob(message)) {
             return parseToDeathByEntityEvent(message);
         }
-
+        if (mobWasKilledByPlayer(message)) {
+            return parseToMobDeathByPlayerEvent(message);
+        }
         return null;
     }
 
@@ -65,21 +67,35 @@ public class PlayerKillEventParser implements IParser<Event> {
         String replace = msg.substring(msg.indexOf(WAS_KILLED_BY)).replace(WAS_KILLED_BY, "").trim();
         String regex = "((.+) (\\((\\d+)\\)))$";
         Pattern pattern = Pattern.compile(regex, Pattern.MULTILINE);
+        Matcher matcher = pattern.matcher(replace);
+        return matcher.matches();
+    }
+
+    private boolean mobWasKilledByPlayer(RustGenericMessage message) {
+        Pattern pattern = Pattern.compile(MOB_KILLED_BY_PLAYER, Pattern.MULTILINE);
         Matcher matcher = pattern.matcher(message.getMessage());
         return matcher.matches();
     }
 
     private PlayerDeathByEntityEvent parseToDeathByEntityEvent(RustGenericMessage message) {
         Matcher matcher = mobPattern.matcher(message.getMessage());
-        if(!matcher.find()){
-            System.out.println("No hago find bien");
-            return null;
-        }
+        if(!matcher.find()) return null;
         PlayerDeathByEntityEvent event = new PlayerDeathByEntityEvent();
         event.setEntity(new MobEntity(matcher.group(7), matcher.group(9)));
         event.setPlayer(new Player(matcher.group(2), matcher.group(4)));
         event.setTime(System.currentTimeMillis());
         event.setReason(DeathReason.KILLED_BY_MOB);
+        return event;
+    }
+
+    private PlayerKillEntityEvent parseToMobDeathByPlayerEvent(RustGenericMessage message) {
+        Pattern pattern = Pattern.compile(MOB_KILLED_BY_PLAYER, Pattern.MULTILINE);
+        Matcher matcher = pattern.matcher(message.getMessage());
+        if(!matcher.find()) return null;
+        PlayerKillEntityEvent event = new PlayerKillEntityEvent();
+        event.setEntity(new MobEntity(matcher.group(2), matcher.group(4)));
+        event.setPlayer(new Player(matcher.group(7), matcher.group(9)));
+        event.setTime(System.currentTimeMillis());
         return event;
     }
 
