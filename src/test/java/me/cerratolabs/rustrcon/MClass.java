@@ -3,6 +3,7 @@ package me.cerratolabs.rustrcon;
 import me.cerratolabs.rustrcon.client.RustClient;
 import me.cerratolabs.rustrcon.config.ConfigReader;
 import me.cerratolabs.rustrcon.config.ServerConfig;
+import me.cerratolabs.rustrcon.listeners.DeathListener;
 import me.cerratolabs.rustrcon.listeners.MessageListener;
 import me.cerratolabs.rustrcon.listeners.PlayerListener;
 import me.nurio.events.EventManager;
@@ -17,6 +18,7 @@ public class MClass {
         ServerConfig config = reader.parse();
         manager.registerEvents(new MessageListener());
         manager.registerEvents(new PlayerListener());
+        manager.registerEvents(new DeathListener());
         rustClient = new RustClient(manager);
         rustClient.startConnection(
                 config.getAddress(),
