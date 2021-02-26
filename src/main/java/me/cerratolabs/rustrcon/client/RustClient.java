@@ -48,8 +48,8 @@ public class RustClient {
     public void registerHandler(String message) {
         RustGenericMessage rustGenericMessage = mapper.readValue(message, RustGenericMessage.class);
         Event event = getEvent(rustGenericMessage);
-        new Thread(() -> eventManager.callEvent(new MessageReceiveEvent(rustGenericMessage))).start();
-        if(event != null) {
+        //  new Thread(() -> eventManager.callEvent(new MessageReceiveEvent(rustGenericMessage))).start();
+        if (event != null) {
             new Thread(() -> eventManager.callEvent(event)).start();
         }
 
@@ -60,14 +60,14 @@ public class RustClient {
         Event parser;
         if (message.getIdentifier() > 0) {
             parser = parserFactory.getParserByIdentifier(message);
+            if (parser != null) return parser;
         }
         if (message.getType().equalsIgnoreCase("CHAT")) {
             return mapper.readValue(message.getMessage(), PlayerChatEvent.class);
         }
         parser = parserFactory.getParser(message);
-        if (parser != null) {
-            return parser;
-        }
+        if (parser != null) return parser;
+
         return null;
     }
 

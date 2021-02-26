@@ -11,7 +11,7 @@ import me.nurio.events.handler.Event;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class PlayerDeathByEntityEvent extends Event {
+public class PlayerDeathByMobEvent extends Event {
 
     private LivingEntity entity;
 
