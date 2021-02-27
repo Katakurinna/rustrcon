@@ -18,4 +18,5 @@ You can add suggestions or send problems by creating an issue
 |PlayerKillEntityEvent|When player kills entity|entity, player, time|
 |PlayerDeathByPlayerEvent|When player kills another player|killer, murdered, reason, time|
 |MessageReceiveEvent|All messages received from rust rcon|RustGenericMessage -> (message, identifier, type, stacktrace)|
-
+|MobKilledByPlayerEvent|Event when player kills a mob| entity, player, time|
+|PlayerDeathByMobEvent|Event when mob kills a player| entity, player, reason, time|
