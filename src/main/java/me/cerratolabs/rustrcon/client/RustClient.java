@@ -48,7 +48,7 @@ public class RustClient {
     public void registerHandler(String message) {
         RustGenericMessage rustGenericMessage = mapper.readValue(message, RustGenericMessage.class);
         Event event = getEvent(rustGenericMessage);
-        //  new Thread(() -> eventManager.callEvent(new MessageReceiveEvent(rustGenericMessage))).start();
+        new Thread(() -> eventManager.callEvent(new MessageReceiveEvent(rustGenericMessage))).start();
         if (event != null) {
             new Thread(() -> eventManager.callEvent(event)).start();
         }
