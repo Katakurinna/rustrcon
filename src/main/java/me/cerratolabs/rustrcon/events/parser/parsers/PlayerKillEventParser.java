@@ -1,11 +1,14 @@
 package me.cerratolabs.rustrcon.events.parser.parsers;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import me.cerratolabs.rustrcon.entities.MobEntity;
 import me.cerratolabs.rustrcon.entities.Player;
 import me.cerratolabs.rustrcon.entities.enums.DeathReason;
-import me.cerratolabs.rustrcon.events.event.pve.PlayerDeathByMobEvent;
 import me.cerratolabs.rustrcon.events.event.pve.MobKilledByPlayerEvent;
+import me.cerratolabs.rustrcon.events.event.pve.PlayerDeathByMobEvent;
 import me.cerratolabs.rustrcon.events.event.pvp.PlayerDeathByPlayerEvent;
+import me.cerratolabs.rustrcon.events.event.pvp.PlayerDeathEventsEvent;
 import me.cerratolabs.rustrcon.events.messages.RustGenericMessage;
 import me.cerratolabs.rustrcon.events.parser.generic.IParser;
 import me.nurio.events.handler.Event;
@@ -16,6 +19,7 @@ import java.util.regex.Pattern;
 public class PlayerKillEventParser implements IParser<Event> {
 
     private static final String KILLED_BY_PLAYER_REGEX = "((.+)(\\[(\\d{17})\\]))( was killed by )((.+)(\\[(\\d{17})\\]))$";
+    private static final String DEATHS_EVENT_REGEX = "((.+)(\\[(\\d{17})\\]))( was killed by )((.+)(\\[(\\d{17})\\]))$";
     private static final String PLAYER_KILLED_BY_MOB_REGEX = "((.+)(\\[(\\d{17})\\]))( was killed by )((.+)(\\[(\\d{0,16})\\]))$";
     private static final String MOB_KILLED_BY_PLAYER_REGEX = "((.+)(\\[(\\d{0,16})\\]))( was killed by )((.+)(\\[(\\d{17})\\]))$";
     private static final String PLAYER_KILLED_BY_ENTITY_REGEX = "((.+)(\\[(\\d{17})\\]))( was killed by )((.+) (\\((\\.+)\\)))$";
@@ -24,16 +28,24 @@ public class PlayerKillEventParser implements IParser<Event> {
     private static final String WAS_SUICIDE = "was suicide";
 
     private final Pattern playerPattern = Pattern.compile(KILLED_BY_PLAYER_REGEX, Pattern.MULTILINE);
+    private final Pattern deathEventPattern = Pattern.compile(DEATHS_EVENT_REGEX, Pattern.MULTILINE);
     private final Pattern mobPattern = Pattern.compile(PLAYER_KILLED_BY_MOB_REGEX, Pattern.MULTILINE);
+
+    private ObjectMapper mapper = new ObjectMapper();
 
     @Override
     public boolean match(RustGenericMessage message) {
         return message.getMessage().contains(WAS_KILLED_BY) ||
-            message.getMessage().contains(WAS_SUICIDE);
+            message.getMessage().contains(WAS_SUICIDE) ||
+            message.getMessage().contains("[DeathEvents]");
     }
 
     @Override
     public Event toEvent(RustGenericMessage message) {
+
+        if (wasDeathEventsEvent(message)) {
+            return parseToDeathEventsEvent(message);
+        }
         if (wasKilledByPlayer(message)) {
             return parseToDeathByPlayerEvent(message);
         }
@@ -43,6 +55,7 @@ public class PlayerKillEventParser implements IParser<Event> {
         if (mobWasKilledByPlayer(message)) {
             return parseToMobDeathByPlayerEvent(message);
         }
+
         return null;
     }
 
@@ -52,6 +65,11 @@ public class PlayerKillEventParser implements IParser<Event> {
         Matcher matcher = playerPattern.matcher(message.getMessage());
         return matcher.matches();
     }
+
+    private boolean wasDeathEventsEvent(RustGenericMessage message) {
+        return message.getMessage().startsWith("[DeathEvents]");
+    }
+
 
     private boolean wasSuicide(RustGenericMessage message) {
         String msg = message.getMessage();
@@ -108,5 +126,21 @@ public class PlayerKillEventParser implements IParser<Event> {
         event.setTime(System.currentTimeMillis());
         event.setReason(DeathReason.KILLED_BY_PLAYER);
         return event;
+    }
+
+    private PlayerDeathEventsEvent parseToDeathEventsEvent(RustGenericMessage message) {
+        // Check if starts with
+        String event = message.getMessage();
+        if (!event.startsWith("[DeathEvents]")) return null;
+        PlayerDeathEventsEvent playerEvent;
+        event = event.substring(13);
+        try {
+            playerEvent = mapper.readValue(event, PlayerDeathEventsEvent.class);
+            playerEvent.setTime(System.currentTimeMillis());
+            playerEvent.setReason(DeathReason.KILLED_BY_PLAYER);
+            return playerEvent;
+        } catch (JsonProcessingException e) {
+            return null;
+        }
     }
 }
